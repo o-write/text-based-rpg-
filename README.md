@@ -1,59 +1,35 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Game RPG Berbasis Teks
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi ini adalah game RPG (Role-Playing Game) berbasis teks yang dibangun menggunakan framework Laravel. Game ini berfokus pada pertarungan giliran (turn-based combat) antara pemain dan musuh, serta memanfaatkan integrasi API eksternal sebagai mekanik utama dalam permainan.
 
-## About Laravel
+## Deskripsi Permainan
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Di dalam game ini, pemain akan melawan musuh dengan sistem poin kesehatan (HP). Masing-masing pihak, baik pemain maupun musuh, memulai permainan dengan 100 HP. Permainan berakhir ketika HP salah satu pihak mencapai angka 0.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Terdapat dua aksi utama yang dapat dilakukan oleh pemain:
+1. Serang (Attack): Mengurangi HP musuh secara acak sebesar 10-20 poin. Setiap kali pemain menyerang, musuh akan langsung membalas serangan (mengurangi HP pemain sebesar 5-15 poin).
+2. Dapatkan Motivasi (Get Motivation): Mengambil kutipan motivasi dari API eksternal untuk memulihkan HP pemain sebanyak 20 poin (maksimal 100 HP). Musuh juga akan melakukan serangan balasan setelah aksi ini.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Segala riwayat pertarungan akan dicatat dan ditampilkan pada log pertarungan di antarmuka game. Selain itu, kutipan motivasi yang didapatkan akan dikumpulkan dan ditampilkan sebagai daftar riwayat di panel motivasi.
 
-## Learning Laravel
+## Integrasi API (Quotes API)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Game ini bertindak sebagai konsumer dari Quotes API (yang berjalan secara lokal) untuk mekanik pemulihan HP. 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Aplikasi ini memanggil endpoint berikut:
+- `GET http://127.0.0.1:8001/api/quotes`: Endpoint utama yang digunakan untuk mengambil seluruh daftar kutipan favorit yang tersimpan di dalam database API tersebut. Game akan memilih satu kutipan secara acak dari daftar ini.
+- `GET http://127.0.0.1:8001/api/quote/random`: Endpoint cadangan yang akan diakses apabila daftar kutipan favorit kosong atau tidak merespon. Endpoint API ini mengambil kutipan acak dari ZenQuotes.
 
-## Laravel Sponsors
+## Cara Menjalankan Aplikasi
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Pastikan Quotes API sudah berjalan di port 8001 sebelum menggunakan fitur Dapatkan Motivasi di dalam game.
 
-### Premium Partners
+1. Buka terminal dan masuk ke direktori Quotes API, lalu jalankan:
+   `php artisan serve --port=8001`
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+2. Buka terminal baru, masuk ke direktori game ini, lalu jalankan:
+   `composer install`
+   `php artisan key:generate`
+   `php artisan serve --port=8002`
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3. Akses game melalui peramban web di URL: `http://127.0.0.1:8002`
